@@ -16,6 +16,7 @@ export class Game extends React.Component {
         itemKey: initialLastIdentityIndex,
         winnerCells: [],
       }],
+      sortDirection: 'asc',
       stepNumber: 0,
       xIsNext: true,
       lastIdentityIndex: initialLastIdentityIndex
@@ -28,7 +29,7 @@ export class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = [...current.squares];
 
-    const winnerCells = this.state.history[this.state.history.length - 1].winnerCells;
+    const winnerCells = this.state.history[this.state.stepNumber].winnerCells;
 
     const isSquareAlreadyActioned = squares[squareIndex];
     if (isSquareAlreadyActioned || winnerCells.length === 3) {
@@ -86,22 +87,36 @@ export class Game extends React.Component {
 
     // console.log('----------------------- RE-RENDERING CYCLE ----------------------');
 
-    const moves = history.map((step, moveIndex) => {
+    const moves = history.map((step) => {
 
-      const desc = moveIndex
-        ? `Go to move ${moveIndex}`
+      const sortedMoveIndex = step.itemKey - 1;
+
+      const desc = step.itemKey !== 1
+        ? `Go to move ${sortedMoveIndex}`
         : `Go to game start`;
 
+      const jumpToMoveIndex = this.state.sortDirection === 'asc' 
+        ? step.itemKey - 1
+        : this.state.history.length - step.itemKey
+
       return (
-        <li key={step.itemKey}>
-          <button onClick={() => this.jumpTo(moveIndex)}>{desc}</button>
+        <li key={sortedMoveIndex}>
+          <button onClick={() => this.jumpTo(jumpToMoveIndex)}>{desc}</button>
         </li>
       );
     })
 
-    let status = gameResult
-      ? `Winner: ${gameResult.winner}`
-      : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
+    let status;
+
+    if (current.itemKey === 10 && current.winnerCells.length !== 3) {
+
+      status = "DRAW (no one won)";
+    } else {
+
+      status = gameResult
+        ? `Winner: ${gameResult.winner}`
+        : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`
+    }
 
     return (
       <div className="game">
@@ -113,12 +128,30 @@ export class Game extends React.Component {
           />
         </div>
         <div className="game-info">
+
           <div>
             <strong>{status}</strong>
           </div>
+
+          <div className="order-toggler">
+            <button onClick={(e) => this.sortMoves('asc')}>Sort Ascending</button>
+            <button onClick={(e) => this.sortMoves('desc')}>Sort Descending</button>
+          </div>
+
           <ol>{moves}</ol>
         </div>
       </div>
     );
+  }
+
+  sortMoves = (direction = 'asc') => {
+
+    const coef = direction === 'asc' ? 1 : -1;
+    const sortedHistory = this.state.history.splice(0).sort((a, b) => (a.itemKey - b.itemKey) * coef);
+
+    this.setState({
+      history: sortedHistory,
+      sortDirection: direction,
+    });
   }
 }
