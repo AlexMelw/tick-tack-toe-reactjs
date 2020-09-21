@@ -87,43 +87,49 @@ export class Game extends React.Component {
 
     // console.log('----------------------- RE-RENDERING CYCLE ----------------------');
 
-    const moves = history.map((step) => {
+    const coef = this.state.sortDirection === 'asc' ? 1 : -1;
 
-      const sortedMoveIndex = step.itemKey - 1;
+    const moves = history.map((step, moveIndex) => {
 
-      const desc = step.itemKey !== 1
-        ? `Go to move ${sortedMoveIndex}`
-        : `Go to game start`;
+      const isAsc = this.state.sortDirection === 'asc';
 
-      const jumpToMoveIndex = this.state.sortDirection === 'asc' 
-        ? step.itemKey - 1
-        : this.state.history.length - step.itemKey
+      let description;
+      let sortedMoveIndex;
+
+      if (isAsc) {
+
+        sortedMoveIndex = moveIndex;
+        description = moveIndex === 0 ? `Go to game start` : `Go to move ${sortedMoveIndex}`;
+      } else {
+
+        sortedMoveIndex = this.state.history.length - 1 - moveIndex;
+        description = moveIndex === this.state.history.length - 1 ? `Go to game start` : `Go to move ${sortedMoveIndex}`;
+      }
 
       return (
         <li key={sortedMoveIndex}>
-          <button onClick={() => this.jumpTo(jumpToMoveIndex)}>{desc}</button>
+          <button onClick={() => this.jumpTo(sortedMoveIndex)}>{description}</button>
         </li>
       );
     })
 
-    let status;
+    let status = "DRAW (no one won)";
 
-    if (current.itemKey === 10 && current.winnerCells.length !== 3) {
-
-      status = "DRAW (no one won)";
-    } else {
+    if (current.itemKey !== 10 || current.winnerCells.length === 3) {
 
       status = gameResult
         ? `Winner: ${gameResult.winner}`
-        : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`
+        : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
+
+    const winnerCells = this.state.history[this.state.stepNumber].winnerCells;
 
     return (
       <div className="game">
         <div className="game-board">
           <Board
             squares={current.squares}
-            winnerCells={this.state.history[this.state.stepNumber].winnerCells}
+            winnerCells={winnerCells}
             onClick={i => this.handleClick(i)}
           />
         </div>
@@ -146,11 +152,7 @@ export class Game extends React.Component {
 
   sortMoves = (direction = 'asc') => {
 
-    const coef = direction === 'asc' ? 1 : -1;
-    const sortedHistory = this.state.history.splice(0).sort((a, b) => (a.itemKey - b.itemKey) * coef);
-
     this.setState({
-      history: sortedHistory,
       sortDirection: direction,
     });
   }
