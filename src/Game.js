@@ -8,8 +8,6 @@ export class Game extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(this.props);
-
     const initialLastIdentityIndex = 1;
 
     this.state = {
@@ -31,8 +29,6 @@ export class Game extends React.Component {
     const squares = [...current.squares];
 
     const winnerCells = this.state.history[this.state.history.length - 1].winnerCells;
-
-    console.log(winnerCells)
 
     const isSquareAlreadyActioned = squares[squareIndex];
     if (isSquareAlreadyActioned || winnerCells.length === 3) {
@@ -76,23 +72,9 @@ export class Game extends React.Component {
 
   jumpTo(step) {
 
-    const lastHistoryIndex = this.state.history.length - 1;
-
-    const historyObj = {
-      ...this.state.history[lastHistoryIndex],
-      winnerCells: step === lastHistoryIndex
-        ? this.state.history[lastHistoryIndex].winnerCells
-        : [],
-    };
-
-    const newHistory = this.state.history
-      .slice(0, lastHistoryIndex)
-      .concat([historyObj]);
-
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
-      history: newHistory
     });
   }
 
@@ -110,9 +92,6 @@ export class Game extends React.Component {
         ? `Go to move ${moveIndex}`
         : `Go to game start`;
 
-      // console.log(`Move index: ${moveIndex}`);
-      // console.log(`ID: ${step.itemKey}`);
-
       return (
         <li key={step.itemKey}>
           <button onClick={() => this.jumpTo(moveIndex)}>{desc}</button>
@@ -129,7 +108,7 @@ export class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
-            winnerCells={this.state.history[this.state.history.length - 1].winnerCells}
+            winnerCells={this.state.history[this.state.stepNumber].winnerCells}
             onClick={i => this.handleClick(i)}
           />
         </div>
