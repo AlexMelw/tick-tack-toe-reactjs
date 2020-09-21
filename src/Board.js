@@ -5,6 +5,9 @@ export class Board extends React.Component {
 
   renderSquare(i) {
 
+    console.log('This props');
+    console.log(this.props);
+
     return (
       <Square
         value={this.props.squares[i]}

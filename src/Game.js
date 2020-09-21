@@ -8,27 +8,34 @@ export class Game extends React.Component {
   constructor(props) {
     super(props);
 
+    console.log(this.props);
+
     const initialLastIdentityIndex = 1;
 
     this.state = {
       history: [{
         squares: new Array(9).fill(null),
-        itemKey: initialLastIdentityIndex
+        itemKey: initialLastIdentityIndex,
+        winnerCells: [],
       }],
+      stepNumber: 0,
       xIsNext: true,
-      winnerCells: [],
       lastIdentityIndex: initialLastIdentityIndex
     };
   }
 
   handleClick(squareIndex) {
 
-    const history = this.state.history;
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = [...current.squares];
 
+    const winnerCells = this.state.history[this.state.history.length - 1].winnerCells;
+
+    console.log(winnerCells)
+
     const isSquareAlreadyActioned = squares[squareIndex];
-    if (isSquareAlreadyActioned || this.state.winnerCells.length === 3) {
+    if (isSquareAlreadyActioned || winnerCells.length === 3) {
 
       return;
     }
@@ -38,32 +45,64 @@ export class Game extends React.Component {
 
     const currentGameState = {
       squares: squares,
-      itemKey: updatedIdentityIndex
+      itemKey: updatedIdentityIndex,
+      winnerCells: []
     };
 
-    this.setState({ lastIdentityIndex: updatedIdentityIndex })
+    const newHistory = [...history, currentGameState];
+    this.setState({
+      lastIdentityIndex: updatedIdentityIndex,
+      stepNumber: newHistory.length - 1,
+      history: newHistory,
+      xIsNext: !this.state.xIsNext
+    }, () => {
+      const gameResult = calculateWinner(squares);
+
+      const penultHistoryIndex = this.state.history.length - 1;
+
+      if (gameResult) {
+        this.setState({
+
+          history: this.state.history
+            .slice(0, penultHistoryIndex)
+            .concat([{
+              ...this.state.history[penultHistoryIndex],
+              winnerCells: gameResult.cells,
+            }])
+        });
+      }
+    });
+  }
+
+  jumpTo(step) {
+
+    const lastHistoryIndex = this.state.history.length - 1;
+
+    const historyObj = {
+      ...this.state.history[lastHistoryIndex],
+      winnerCells: step === lastHistoryIndex
+        ? this.state.history[lastHistoryIndex].winnerCells
+        : [],
+    };
+
+    const newHistory = this.state.history
+      .slice(0, lastHistoryIndex)
+      .concat([historyObj]);
 
     this.setState({
-      history: [...history, ...[currentGameState]],
-      xIsNext: !this.state.xIsNext
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+      history: newHistory
     });
-
-    const gameResult = calculateWinner(squares);
-
-    if (gameResult) {
-      this.setState({
-        winnerCells: gameResult.cells
-      });
-    }
   }
 
   render() {
 
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     const gameResult = calculateWinner(current.squares);
 
-    console.log('----------------------- RE-RENDERING CYCLE ----------------------');
+    // console.log('----------------------- RE-RENDERING CYCLE ----------------------');
 
     const moves = history.map((step, moveIndex) => {
 
@@ -71,8 +110,8 @@ export class Game extends React.Component {
         ? `Go to move ${moveIndex}`
         : `Go to game start`;
 
-      console.log(`Move index: ${moveIndex}`);
-      console.log(`ID: ${step.itemKey}`);
+      // console.log(`Move index: ${moveIndex}`);
+      // console.log(`ID: ${step.itemKey}`);
 
       return (
         <li key={step.itemKey}>
@@ -90,12 +129,14 @@ export class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
-            winnerCells={this.state.winnerCells}
+            winnerCells={this.state.history[this.state.history.length - 1].winnerCells}
             onClick={i => this.handleClick(i)}
           />
         </div>
         <div className="game-info">
-          <div>{status}</div>
+          <div>
+            <strong>{status}</strong>
+          </div>
           <ol>{moves}</ol>
         </div>
       </div>

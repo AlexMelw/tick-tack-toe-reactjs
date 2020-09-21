@@ -13,6 +13,9 @@ const StyledSquareButton = styled.button`
 
 export const Square = (props) => {
 
+  console.log('SQUARE props');
+  console.log(props);
+
   const isStrike = props.winnerCells.some(x => x === props.index);
 
   return (
