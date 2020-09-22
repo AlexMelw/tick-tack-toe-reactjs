@@ -17,21 +17,21 @@ export class Board extends React.Component {
 
   render() {
 
-    // let board = ``;
+    // let board = [];
 
     // for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
       
-      // for (let columnIndex = 0; columnIndex < 3; columnIndex++) {
-      //   this.renderSquare(3 * rowIndex + columnIndex)
-      // }
+    //   const row = [];
 
-      // const rowCells = [0, 1, 2].map(columnIndex => this.renderSquare(3 * rowIndex + columnIndex));
+    //   for (let columnIndex = 0; columnIndex < 3; columnIndex++) {
+    //     row.push(this.renderSquare(3 * rowIndex + columnIndex));
+    //   }
 
-      // board += `
-      //   <div className="board-row">
-      //     ${rowCells}
-      //   </div>
-      // `;
+    //   board = [...board, (
+    //     <div key={rowIndex} className="board-row">
+    //       {row}
+    //     </div>
+    //   )];
     // }
 
     const board = [0, 1, 2].map(rowIndex => {
