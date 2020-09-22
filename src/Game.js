@@ -87,8 +87,6 @@ export class Game extends React.Component {
 
     // console.log('----------------------- RE-RENDERING CYCLE ----------------------');
 
-    const coef = this.state.sortDirection === 'asc' ? 1 : -1;
-
     const moves = history.map((step, moveIndex) => {
 
       const isAsc = this.state.sortDirection === 'asc';
@@ -106,12 +104,23 @@ export class Game extends React.Component {
         description = moveIndex === this.state.history.length - 1 ? `Go to game start` : `Go to move ${sortedMoveIndex}`;
       }
 
+      if (this.state.stepNumber === sortedMoveIndex) {
+        
+        return (
+          <li key={sortedMoveIndex}>
+            <button onClick={() => this.jumpTo(sortedMoveIndex)}>
+              <strong>{description}</strong>
+            </button>
+          </li>
+        )
+      }
+
       return (
         <li key={sortedMoveIndex}>
           <button onClick={() => this.jumpTo(sortedMoveIndex)}>{description}</button>
         </li>
       );
-    })
+    });
 
     let status = "DRAW (no one won)";
 
@@ -133,8 +142,8 @@ export class Game extends React.Component {
             onClick={i => this.handleClick(i)}
           />
         </div>
-        <div className="game-info">
 
+        <div className="game-info">
           <div>
             <strong>{status}</strong>
           </div>
