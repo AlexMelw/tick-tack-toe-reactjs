@@ -15,10 +15,13 @@ export function calculateWinner(squares) {
   ];
 
   for (const line of lines) {
+
     const [a, b, c] = line;
+
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      
       return {
-        winner: squares[a],
+        winner: squares[a], // X or O
         cells: line
       };
     }

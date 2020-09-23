@@ -41,6 +41,7 @@ export class Game extends React.Component {
     const updatedIdentityIndex = this.state.lastIdentityIndex + 1;
 
     const currentGameState = {
+      coords: `(${Math.floor(squareIndex / 3) + 1},${squareIndex % 3 + 1})`, // (row,col)
       squares: squares,
       itemKey: updatedIdentityIndex,
       winnerCells: []
@@ -71,6 +72,13 @@ export class Game extends React.Component {
     });
   }
 
+  sortMoves = (direction = 'asc') => {
+
+    this.setState({
+      sortDirection: direction,
+    });
+  }
+
   jumpTo(step) {
 
     this.setState({
@@ -85,8 +93,6 @@ export class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const gameResult = calculateWinner(current.squares);
 
-    // console.log('----------------------- RE-RENDERING CYCLE ----------------------');
-
     const moves = history.map((step, moveIndex) => {
 
       const isAsc = this.state.sortDirection === 'asc';
@@ -97,15 +103,19 @@ export class Game extends React.Component {
       if (isAsc) {
 
         sortedMoveIndex = moveIndex;
-        description = moveIndex === 0 ? `Go to game start` : `Go to move ${sortedMoveIndex}`;
+        description = moveIndex === 0
+          ? `Go to game start`
+          : `Go to move ${sortedMoveIndex}: ${history[moveIndex].coords}`;
       } else {
 
         sortedMoveIndex = this.state.history.length - 1 - moveIndex;
-        description = moveIndex === this.state.history.length - 1 ? `Go to game start` : `Go to move ${sortedMoveIndex}`;
+        description = moveIndex === this.state.history.length - 1
+          ? `Go to game start`
+          : `Go to move ${sortedMoveIndex}: ${history[sortedMoveIndex].coords}`;
       }
 
       if (this.state.stepNumber === sortedMoveIndex) {
-        
+
         return (
           <li key={sortedMoveIndex}>
             <button onClick={() => this.jumpTo(sortedMoveIndex)}>
@@ -157,12 +167,5 @@ export class Game extends React.Component {
         </div>
       </div>
     );
-  }
-
-  sortMoves = (direction = 'asc') => {
-
-    this.setState({
-      sortDirection: direction,
-    });
   }
 }
