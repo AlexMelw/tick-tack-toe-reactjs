@@ -114,20 +114,15 @@ export class Game extends React.Component {
           : `Go to move ${sortedMoveIndex}: ${history[sortedMoveIndex].coords}`;
       }
 
-      if (this.state.stepNumber === sortedMoveIndex) {
-
-        return (
-          <li key={sortedMoveIndex}>
-            <button onClick={() => this.jumpTo(sortedMoveIndex)}>
-              <strong>{description}</strong>
-            </button>
-          </li>
-        )
-      }
+      const styledDescription = (this.state.stepNumber === sortedMoveIndex)
+        ? <strong>{description}</strong>
+        : description;
 
       return (
         <li key={sortedMoveIndex}>
-          <button onClick={() => this.jumpTo(sortedMoveIndex)}>{description}</button>
+          <button onClick={() => this.jumpTo(sortedMoveIndex)}>
+            {styledDescription}
+          </button>
         </li>
       );
     });

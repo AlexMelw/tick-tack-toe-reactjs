@@ -36,7 +36,8 @@ export class Board extends React.Component {
 
     const board = [0, 1, 2].map(rowIndex => {
 
-        const rowCells = [0, 1, 2].map(columnIndex => this.renderSquare(3 * rowIndex + columnIndex));
+        const rowCells = [0, 1, 2].map(
+          columnIndex => this.renderSquare(3 * rowIndex + columnIndex));
 
         return (
           <div key={rowIndex} className="board-row">
