@@ -104,14 +104,13 @@ export class Game extends React.Component {
           : `Go to move ${sortedMoveIndex}: ${history[sortedMoveIndex].coords}`;
       }
 
-      const styledDescription = (this.state.stepNumber === sortedMoveIndex)
-        ? <strong>{description}</strong>
-        : description;
+      const isCurrentStep = (this.state.stepNumber === sortedMoveIndex);
 
       return (
         <li key={sortedMoveIndex}>
           <button onClick={() => this.jumpTo(sortedMoveIndex)}>
-            {styledDescription}
+            {isCurrentStep && <strong>{description}</strong>}
+            {!isCurrentStep && description}
           </button>
         </li>
       );
