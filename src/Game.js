@@ -48,27 +48,28 @@ export class Game extends React.Component {
     };
 
     const newHistory = [...history, currentGameState];
-    this.setState({
+
+    const updatedState = {
+      ...this.state,
       lastIdentityIndex: updatedIdentityIndex,
       stepNumber: newHistory.length - 1,
       history: newHistory,
       xIsNext: !this.state.xIsNext
-    }, () => {
-      const gameResult = calculateWinner(squares);
+    }
 
-      const penultHistoryIndex = this.state.history.length - 1;
+    const penultHistoryIndex = updatedState.history.length - 1;
+    const gameResult = calculateWinner(squares);
 
-      if (gameResult) {
-        this.setState({
+    if (!gameResult) return;
 
-          history: this.state.history
-            .slice(0, penultHistoryIndex)
-            .concat([{
-              ...this.state.history[penultHistoryIndex],
-              winnerCells: gameResult.cells,
-            }])
-        });
-      }
+    this.setState({
+      ...updatedState,
+      history: updatedState.history
+        .slice(0, penultHistoryIndex)
+        .concat([{
+          ...updatedState.history[penultHistoryIndex],
+          winnerCells: gameResult.cells,
+        }])
     });
   }
 
