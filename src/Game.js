@@ -60,7 +60,10 @@ export class Game extends React.Component {
     const penultHistoryIndex = updatedState.history.length - 1;
     const gameResult = calculateWinner(squares);
 
-    if (!gameResult) return;
+    if (!gameResult) {
+      this.setState(updatedState);
+      return;
+    }
 
     this.setState({
       ...updatedState,
