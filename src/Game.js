@@ -33,7 +33,6 @@ export class Game extends React.Component {
 
     const isSquareAlreadyActioned = squares[squareIndex];
     if (isSquareAlreadyActioned || winnerCells.length === 3) {
-
       return;
     }
 

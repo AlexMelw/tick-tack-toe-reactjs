@@ -17,7 +17,7 @@ export class Board extends React.Component {
 
   render() {
 
-    // let board = [];
+    // const board = [];
 
     // for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
       
@@ -27,11 +27,11 @@ export class Board extends React.Component {
     //     row.push(this.renderSquare(3 * rowIndex + columnIndex));
     //   }
 
-    //   board = [...board, (
+    //   board = board.push(
     //     <div key={rowIndex} className="board-row">
     //       {row}
     //     </div>
-    //   )];
+    //   );
     // }
 
     const board = [0, 1, 2].map(rowIndex => {
