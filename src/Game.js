@@ -47,33 +47,20 @@ export class Game extends React.Component {
       winnerCells: []
     };
 
+    const gameResult = calculateWinner(squares);
+
+    if (gameResult) {
+      currentGameState.winnerCells = gameResult.cells;
+    }
+
     const newHistory = [...history, currentGameState];
 
-    const updatedState = {
-      ...this.state,
+    this.setState((state, props) => ({
       lastIdentityIndex: updatedIdentityIndex,
       stepNumber: newHistory.length - 1,
       history: newHistory,
-      xIsNext: !this.state.xIsNext
-    }
-
-    const penultHistoryIndex = updatedState.history.length - 1;
-    const gameResult = calculateWinner(squares);
-
-    if (!gameResult) {
-      this.setState(updatedState);
-      return;
-    }
-
-    this.setState({
-      ...updatedState,
-      history: updatedState.history
-        .slice(0, penultHistoryIndex)
-        .concat([{
-          ...updatedState.history[penultHistoryIndex],
-          winnerCells: gameResult.cells,
-        }])
-    });
+      xIsNext: !state.xIsNext
+    }));
   }
 
   sortMoves = (direction = 'asc') => {
@@ -131,9 +118,12 @@ export class Game extends React.Component {
       );
     });
 
+    const actionedSquaresCount = this.state.history[this.state.stepNumber]
+      .squares.filter(square => square != null).length
+
     let status = "DRAW (no one won)";
 
-    if (current.itemKey !== 10 || current.winnerCells.length === 3) {
+    if (actionedSquaresCount !== 9 || current.winnerCells.length === 3) {
 
       status = gameResult
         ? `Winner: ${gameResult.winner}`
