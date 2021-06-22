@@ -27,7 +27,7 @@ export class Board extends React.Component {
     //     row.push(this.renderSquare(3 * rowIndex + columnIndex));
     //   }
 
-    //   board = board.push(
+    //   board.push(
     //     <div key={rowIndex} className="board-row">
     //       {row}
     //     </div>
